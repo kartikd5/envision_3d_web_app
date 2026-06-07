@@ -811,14 +811,14 @@ export async function getProducts(options?: {
         .select("id")
         .eq("parent_category_id", catData.id);
 
-      const categoryIds = [catData.id, ...(subCats || []).map(sc => sc.id)];
+      const categoryIds = [catData.id, ...(subCats || []).map((sc: any) => sc.id)];
 
       const { data: joinData } = await supabase
         .from("product_categories")
         .select("product_id")
         .in("category_id", categoryIds);
       
-      const allowedIds = new Set((joinData || []).map(j => j.product_id));
+      const allowedIds = new Set((joinData || []).map((j: any) => j.product_id));
       products = products.filter(p => allowedIds.has(p.id));
     } else {
       products = [];

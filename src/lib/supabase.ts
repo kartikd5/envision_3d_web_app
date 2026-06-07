@@ -5,14 +5,16 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 if (!supabaseUrl) {
-  console.warn("Supabase NEXT_PUBLIC_SUPABASE_URL is missing.");
+  console.warn("Supabase NEXT_PUBLIC_SUPABASE_URL is missing. Operating in mock-resilient mode.");
 }
 
 // Public client for client components & read operations
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = supabaseUrl 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null as any;
 
 // Server-only admin client for bypass operations (e.g. storage bucket uploads, admin updates)
-export const supabaseAdmin = typeof window === "undefined" 
+export const supabaseAdmin = (supabaseUrl && typeof window === "undefined") 
   ? createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         persistSession: false,
